@@ -2,18 +2,14 @@
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    justify-content: space-evenly;
     width: 90%;
+    height: 90px;
 
     .alias {
         width: 100%;
         margin: 0;
         text-align: right;
-    }
-
-    .balance {
-        align-items: center;
-        height: 25px;
-        background-color: red;
     }
 
     .capacity {

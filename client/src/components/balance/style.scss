@@ -1,0 +1,14 @@
+.balance {
+    display: flex;
+    height: 25px;
+    border-radius: 6px;
+    overflow: hidden;
+
+    .inbound {
+        background-color: rgba(59, 40, 236, 0.1);
+    }
+
+    .outbound {
+        background-color: rgba(241, 85, 85, 0.534);
+    }
+}

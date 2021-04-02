@@ -1,18 +1,19 @@
+import { Balance } from "../index";
 import "./style.scss";
 
-const Channel = ({ alias }) => {
-    return (
-        <div className="channel">
-            <p className="alias">
-                {alias}
-            </p>
-            <div className="balance" />
-            <div className="capacity">
-                <p className="value">1000</p>
-                <p className="value">20000</p>
-            </div>
+const Channel = ({ alias, remote_balance, local_balance, ...channel }) => (
+    <div className="channel">
+        <p className="alias">
+            {alias}
+        </p>
+        {/* <div className="balance" /> */}
+        <Balance {...channel} />
+        <div className="capacity">
+            <p className="value">{local_balance}</p>
+            <p className="value">{remote_balance}</p>
         </div>
-    )
-}
+    </div>
+)
+
 
 export default Channel;
