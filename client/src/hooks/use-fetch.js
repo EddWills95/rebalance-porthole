@@ -28,8 +28,6 @@ const useFetch = (endpoint) => {
         fetchData();
     }, [endpoint]);
 
-    console.log({ loading, data, error });
-
     return { loading, data, error };
 };
 

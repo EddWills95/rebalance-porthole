@@ -1,5 +1,5 @@
-import { useState } from "react";
-import './App.css';
+import { useEffect, useState } from "react";
+import './App.scss';
 import { Channel } from './components';
 import useFetch from './hooks/use-fetch';
 import { sortChannels } from './utils';
@@ -7,6 +7,15 @@ import { sortChannels } from './utils';
 function App() {
   const { loading, data: channels, error } = useFetch('channels');
   const [sort, setSort] = useState('local_balance');
+  const [selected, setSelected] = useState(undefined);
+
+  useEffect(() => {
+    if (selected && (selected.local_balance / selected.capacity) * 100 > 50) {
+      setSort('local_balance');
+    } else {
+      setSort('remote_balance');
+    }
+  }, [selected]);
 
   if (loading) {
     return <h1>Loading...</h1>
@@ -23,8 +32,16 @@ function App() {
         <option value="remote_balance">Remote Balance</option>
         <option value=''>None</option>
       </select>
+
+      {selected &&
+        <>
+          <Channel channel={selected} onSelect={() => setSelected(undefined)} />
+          <p>⬇️</p>
+        </>
+      }
+
       {sortChannels(channels, sort).map(channel =>
-        <Channel {...channel} />
+        <Channel channel={channel} onSelect={setSelected} selected={channel === selected} />
       )}
     </div>
   );
