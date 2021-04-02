@@ -33,6 +33,11 @@ app.get('/wallet', async (req, res) => {
     res.json(wallet);
 })
 
+app.post('/rebalance', (req, res) => {
+    const rebalance = LightningService.rebalance(req.local, req.remote);
+    res.json(rebalance);
+})
+
 // set up bos
 
 

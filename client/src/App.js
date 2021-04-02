@@ -7,15 +7,60 @@ import { sortChannels } from './utils';
 function App() {
   const { loading, data: channels, error } = useFetch('channels');
   const [sort, setSort] = useState('local_balance');
-  const [selected, setSelected] = useState(undefined);
+  const [selected1, setSelected1] = useState(undefined);
+  const [selected2, setSelected2] = useState(undefined);
+
+  const handleSelect = (channel) => {
+
+    if (selected1 === channel) {
+      setSelected1(undefined);
+      setSelected2(undefined);
+      return;
+    }
+
+    if (!selected1) {
+      setSelected1(channel);
+      return;
+    }
+
+
+    if (selected1 && !selected2) {
+      setSelected2(channel);
+      return;
+    }
+
+    if (selected1 && selected2) {
+
+      if (channel === selected2) {
+        setSelected2(undefined);
+        return;
+      }
+
+      if (channel === selected1) {
+        setSelected1(undefined);
+        setSelected2(undefined);
+        return;
+      }
+    }
+  }
+
+  const handleBalance = () => {
+
+  }
 
   useEffect(() => {
-    if (selected && (selected.local_balance / selected.capacity) * 100 > 50) {
-      setSort('local_balance');
+    if (selected1) {
+      if ((selected1.local_balance / selected1.capacity) * 100 > 50) {
+        setSort('local_balance');
+      } else {
+        setSort('remote_balance');
+      }
     } else {
-      setSort('remote_balance');
+      setSort('local_balance');
     }
-  }, [selected]);
+  }, [selected1, selected2]);
+
+
 
   if (loading) {
     return <h1>Loading...</h1>
@@ -33,15 +78,26 @@ function App() {
         <option value=''>None</option>
       </select>
 
-      {selected &&
+      {selected1 &&
         <>
-          <Channel channel={selected} onSelect={() => setSelected(undefined)} />
+          <Channel channel={selected1} onSelect={handleSelect} />
           <p>⬇️</p>
         </>
       }
 
-      {sortChannels(channels, sort).map(channel =>
-        <Channel channel={channel} onSelect={setSelected} selected={channel === selected} />
+      {selected2 &&
+        <Channel channel={selected2} onSelect={handleSelect} />
+      }
+
+      {!selected2 && sortChannels(channels, sort).map(channel =>
+        <Channel key={channel.alias} channel={channel} onSelect={handleSelect} selected={channel === selected1} />
+      )}
+
+      {selected1 && selected2 && (
+        <>
+          <span>Time to do some balancing</span>
+          <button onClick={handleBalance}>BALANCE</button>
+        </>
       )}
     </div>
   );
