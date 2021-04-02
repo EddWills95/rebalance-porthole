@@ -5,6 +5,19 @@
     justify-content: space-evenly;
     width: 90%;
     height: 90px;
+    border-radius: 6px;
+    overflow: hidden;
+
+    transition: all 0.1s;
+
+    &:hover {
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+        cursor: pointer;
+    }
+
+    &:active {
+        box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
+    }
 
     .alias {
         width: 100%;
