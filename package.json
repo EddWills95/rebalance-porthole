@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon --ignore 'client/*' index.js"
   },
   "dependencies": {
     "balanceofsatoshis": "^8.0.2",
