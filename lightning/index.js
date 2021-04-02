@@ -19,6 +19,10 @@ class Lightning {
         return lnService.getChannels({ lnd: this.lnd });
     }
 
+    getNode(public_key) {
+        return lnService.getNode({ lnd: this.lnd, public_key })
+    }
+
     getWalletInfo() {
         return lnService.getWalletInfo({ lnd: this.lnd });
     }

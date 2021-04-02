@@ -1,9 +1,14 @@
 const express = require('express')
 const app = express()
+const cors = require('cors');
+const morgan = require('morgan');
 // const balances = require('./node_modules/balanceofsatoshis/balances');
 // const rebalance = require('./node_modules/balanceofsatoshis/swaps/rebalance');
 
 const LightningService = require('./lightning');
+
+app.use(cors());
+app.use(morgan('combined'));
 
 app.get('/', function (req, res) {
     res.send('Hello World')
@@ -11,8 +16,15 @@ app.get('/', function (req, res) {
 
 // Fetch all channel status
 app.get('/channels', async (req, res) => {
-    const channels = await LightningService.getChannels();
-    res.json(channels);
+    const getAlias = async (channel) => {
+        const { alias } = await LightningService.getNode(channel.partner_public_key);
+        return { ...channel, alias };
+    }
+
+    const { channels } = await LightningService.getChannels();
+    const withAlias = await Promise.all(channels.map(await getAlias));
+
+    res.json(withAlias);
 });
 
 // Active channels from this one
@@ -24,7 +36,7 @@ app.get('/wallet', async (req, res) => {
 // set up bos
 
 
-console.log('BOS-Mode Listening on 3000');
+console.log('BOS-Mode Listening on 3001');
 
 const logger = console.log;
 

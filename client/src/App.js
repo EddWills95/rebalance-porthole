@@ -1,23 +1,23 @@
-import logo from './logo.svg';
 import './App.css';
+import { Channel } from './components';
+import useFetch from './hooks/use-fetch';
 
 function App() {
+  const { loading, data: channels, error } = useFetch('channels');
+
+  if (loading) {
+    return <h1>Loading...</h1>
+  }
+
+  if (error) {
+    return <p>{JSON.stringify(error)}</p>
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="bos-mode">
+      {channels.map(channel =>
+        <Channel {...channel} />
+      )}
     </div>
   );
 }
