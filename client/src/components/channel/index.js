@@ -7,7 +7,7 @@ const Channel = ({ alias, remote_balance, local_balance, ...channel }) => (
             {alias}
         </p>
         {/* <div className="balance" /> */}
-        <Balance {...channel} />
+        <Balance local_balance={local_balance} remote_balance={remote_balance} />
         <div className="capacity">
             <p className="value">{local_balance}</p>
             <p className="value">{remote_balance}</p>
