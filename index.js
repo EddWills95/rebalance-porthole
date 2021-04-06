@@ -6,6 +6,7 @@ const morgan = require('morgan');
 // const rebalance = require('./node_modules/balanceofsatoshis/swaps/rebalance');
 
 const LightningService = require('./lightning');
+const RebalanceService = require('./rebalance');
 
 app.use(cors());
 app.use(morgan('combined'));
@@ -16,15 +17,9 @@ app.get('/', function (req, res) {
 
 // Fetch all channel status
 app.get('/channels', async (req, res) => {
-    const getAlias = async (channel) => {
-        const { alias } = await LightningService.getNode(channel.partner_public_key);
-        return { ...channel, alias };
-    }
+    const data = await RebalanceService.getCandidates();
 
-    const { channels } = await LightningService.getChannels();
-    const withAlias = await Promise.all(channels.map(await getAlias));
-
-    res.json(withAlias);
+    res.json(data);
 });
 
 // Active channels from this one

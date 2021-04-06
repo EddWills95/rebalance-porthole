@@ -2,8 +2,6 @@ const lnService = require('ln-service');
 const rebalance = require('balanceofsatoshis/swaps/rebalance');
 const fs = require('fs')
 
-console.log(__dirname);
-
 const cert = fs.readFileSync(__dirname + '/tls.cert');
 const macaroon = fs.readFileSync(__dirname + '/admin.macaroon');
 

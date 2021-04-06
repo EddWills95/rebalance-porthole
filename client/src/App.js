@@ -44,9 +44,7 @@ function App() {
     }
   }
 
-  const handleBalance = () => {
-
-  }
+  const handleBalance = () => { }
 
   useEffect(() => {
     if (selected1) {
