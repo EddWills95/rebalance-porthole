@@ -9,11 +9,31 @@ class RebalanceService {
         this.grpc = 'umbrel.local:10009';
     }
 
-    getCandidates() {
+    getIncomingCandidates() {
         return new Promise((resolve, reject) => {
             var dataToSend;
             try {
-                const python = spawn('python', ['./rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l']);
+                const python = spawn('python', ['./rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-i']);
+
+                python.stdout.on('data', function (data) {
+                    dataToSend = data.toString();
+                });
+
+                python.on('close', code => {
+                    resolve(Parser.parseChannels(dataToSend));
+                })
+            } catch (error) {
+                console.log(error);
+                reject(error);
+            }
+        })
+    }
+
+    getOutgoingCandidates() {
+        return new Promise((resolve, reject) => {
+            var dataToSend;
+            try {
+                const python = spawn('python', ['./rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-o']);
 
                 python.stdout.on('data', function (data) {
                     dataToSend = data.toString();
