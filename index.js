@@ -16,8 +16,15 @@ app.get('/', function (req, res) {
 })
 
 // Fetch all channel status
-app.get('/channels', async (req, res) => {
-    const data = await RebalanceService.getCandidates();
+app.get('/incomingCandidates', async (req, res) => {
+    const data = await RebalanceService.getIncomingCandidates();
+
+    res.json(data);
+});
+
+// Fetch all channel status
+app.get('/outgoingCandidates', async (req, res) => {
+    const data = await RebalanceService.getOutgoingCandidates();
 
     res.json(data);
 });
