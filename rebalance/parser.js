@@ -1,5 +1,7 @@
 const dataPoints = ['Pubkey', 'Channel Point', 'Local ratio', 'Capacity', 'Remote balance', 'Local balance', 'Amount for 50-50']
 
+const camelCase = require('../utils/camelCase');
+
 class Parser {
 
     parseChannels(string) {
@@ -17,7 +19,12 @@ class Parser {
         channelStringData.forEach((channelString) => {
             dataPoints.forEach(dataPoint => {
                 if (channelString.includes(dataPoint)) {
-                    channelObject[dataPoint] = channelString.split(`${dataPoint}:`)[1];
+                    var value = channelString.split(`${dataPoint}:`)[1].trimLeft().replace(/,/g, '');
+                    if (dataPoint == dataPoints[0] || dataPoint == dataPoints[1]) {
+                        channelObject[camelCase(dataPoint)] = value;
+                    } else {
+                        channelObject[camelCase(dataPoint)] = parseFloat(value);
+                    }
                 }
             })
         });
