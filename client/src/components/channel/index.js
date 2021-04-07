@@ -9,13 +9,13 @@ const Channel = ({ channel, onSelect, selected }) => {
     return (
         <div className="channel" onClick={() => onSelect(channel)}>
             <p className="alias">
-                {channel.alias}
+                {channel.pubkey}
             </p>
             {/* <div className="balance" /> */}
-            <Balance local_balance={channel.local_balance} remote_balance={channel.remote_balance} />
+            <Balance local_balance={channel.localBalance} remote_balance={channel.remoteBalance} />
             <div className="capacity">
-                <p className="value">{channel.local_balance}</p>
-                <p className="value">{channel.remote_balance}</p>
+                <p className="value">{channel.localBalance}</p>
+                <p className="value">{channel.remoteBalance}</p>
             </div>
         </div>
     )
