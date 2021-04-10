@@ -38,7 +38,7 @@ const Rebalance = ({ channel, onSelect }) => {
         <>
             <Channel channel={channel} onSelect={onSelect} />
 
-            {rebalancing ? <span>Rebalancing: {message}</span> : <button onClick={handleRebalance}>Rebalance</button>}
+            {rebalancing ? <p>Rebalancing: {message}</p> : <button onClick={handleRebalance}>Rebalance</button>}
         </>
     )
 }
