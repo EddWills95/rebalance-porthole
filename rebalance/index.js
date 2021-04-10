@@ -69,10 +69,10 @@ class RebalanceService {
                 });
 
                 // This is what the python uses for debugging when balancing
-                python.stderr.on('data', data => {
-                    console.log("stderr", data.toString());
-                    sendMessage(JSON.stringify(data.toString()));
-                })
+                // python.stderr.on('data', data => {
+                //     console.log("stderr", data.toString());
+                //     sendMessage(JSON.stringify(data.toString()));
+                // })
 
                 python.on('close', code => {
                     resolve(code);

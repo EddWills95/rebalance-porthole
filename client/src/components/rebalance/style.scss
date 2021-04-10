@@ -1,0 +1,10 @@
+.rebalance {
+    display: flex;
+    flex-direction: column;
+    
+    .messages {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}

@@ -11,7 +11,6 @@ const useSocket = (endpoint) => {
 
     useEffect(() => {
         connect();
-        console.log('connecting', ws);
         ws.current.onopen = () => {
             setClosed(false);
         }
