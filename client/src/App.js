@@ -12,24 +12,9 @@ function App() {
   const [sort, setSort] = useState(INCOMING);
   const [selected, setSelected] = useState(undefined);
 
-  const { loading, data: channels, error } = useFetch(
+  const { loading, data: channels, error, refetch } = useFetch(
     sort === INCOMING ? "incomingCandidates" : "outgoingCandidates"
   );
-
-  // This works well but we need a way to know if we're waiting for a rebalance
-  // We also need to refresh the data after a fetch
-
-  // useEffect(() => {
-  //   let timer = setInterval(() => {
-  //     fetch('http://localhost:3001/status').then(data => data.json()).then((d) => {
-  //       setRebalancingState(d)
-  //     })
-  //   }, 1000);
-
-  //   return () => {
-  //     clearTimeout(timer);
-  //   }
-  // }, []);
 
   const handleSelect = (channel) => {
     if (selected === channel) {
@@ -37,11 +22,6 @@ function App() {
     }
 
     setSelected(channel);
-  }
-
-  const handleBalance = () => {
-    const ws = new WebSocket('ws://localhost:3001/rebalance');
-
   }
 
   if (error) {
@@ -65,7 +45,7 @@ function App() {
       )}
 
       {selected && (
-        <Rebalance channel={selected} onSelect={() => handleSelect(undefined)} />
+        <Rebalance channel={selected} onSelect={() => handleSelect(undefined)} refetch={refetch} />
       )}
     </div>
   );

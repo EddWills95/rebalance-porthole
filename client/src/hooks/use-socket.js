@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 
-const useSocket = (endpoint) => {
+const useSocket = (endpoint, refetch = () => { }) => {
     const ws = useRef(null);
     const [closed, setClosed] = useState(true);
 
@@ -16,6 +16,7 @@ const useSocket = (endpoint) => {
         }
         ws.current.onclose = () => {
             setClosed(true);
+            refetch();
         }
 
         return () => {

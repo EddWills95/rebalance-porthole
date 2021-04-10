@@ -41,8 +41,7 @@ class RebalanceService {
                 const python = spawn('python', ['./rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-o']);
 
                 python.stdout.on('data', function (data) {
-                    // dataToSend = data.toString();
-                    this.status = data.toString();
+                    dataToSend = data.toString();
                 });
 
                 python.on('close', code => {

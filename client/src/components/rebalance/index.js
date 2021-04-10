@@ -4,11 +4,11 @@ import useSocket from "../../hooks/use-socket";
 
 import "./style.scss";
 
-const Rebalance = ({ channel, onSelect }) => {
+const Rebalance = ({ channel, onSelect, refetch }) => {
     const [rebalancing, setRebalancing] = useState(false);
     const [messages, setMessages] = useState([]);
 
-    const { socket, reconnect } = useSocket('rebalance');
+    const { socket, reconnect } = useSocket('rebalance', refetch);
 
     useEffect(() => {
         if (!socket) return;
@@ -19,7 +19,7 @@ const Rebalance = ({ channel, onSelect }) => {
             console.log("e", message);
         }
 
-    }, [messages, setMessages, socket]);
+    }, [messages, setMessages, socket, refetch]);
 
     const handleRebalance = () => {
         setRebalancing(true);
@@ -43,8 +43,8 @@ const Rebalance = ({ channel, onSelect }) => {
             {rebalancing ?
                 <div className="messages">
                     <p>Rebalancing</p>
-                    {messages.map(msg =>
-                        <p>{msg}</p>
+                    {messages.map((msg, index) =>
+                        <p key={index}>{msg}</p>
                     )}
                 </div>
                 : <button onClick={handleRebalance}>Rebalance</button>}
