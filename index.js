@@ -2,50 +2,48 @@ const express = require('express')
 const app = express()
 const cors = require('cors');
 const morgan = require('morgan');
+const websocket = require('express-ws');
+
 // const balances = require('./node_modules/balanceofsatoshis/balances');
 // const rebalance = require('./node_modules/balanceofsatoshis/swaps/rebalance');
 
-const LightningService = require('./lightning');
+// const LightningService = require('./lightning');
 const RebalanceService = require('./rebalance');
+const { rebalance } = require('./rebalance');
 
 app.use(cors());
 app.use(morgan('combined'));
+app.use(express.json());
+websocket(app);
 
-app.get('/', function (req, res) {
-    res.send('Hello World')
-})
-
-// Fetch all channel status
 app.get('/incomingCandidates', async (req, res) => {
     const data = await RebalanceService.getIncomingCandidates();
 
     res.json(data);
 });
 
-// Fetch all channel status
 app.get('/outgoingCandidates', async (req, res) => {
     const data = await RebalanceService.getOutgoingCandidates();
 
     res.json(data);
 });
 
-// Active channels from this one
-app.get('/wallet', async (req, res) => {
-    const wallet = await LightningService.getWalletInfo();
-    res.json(wallet);
-})
+app.ws('/rebalance', (ws, req) => {
+    console.log('connection established');
 
-app.post('/rebalance', (req, res) => {
-    const rebalance = LightningService.rebalance(req.local, req.remote);
-    res.json(rebalance);
-})
+    const sendMessage = (message) => ws.send(message);
 
-// set up bos
+    ws.on('message', async (msg) => {
+        console.log(msg);
+        const { channelId, direction } = JSON.parse(msg);
+        console.log(channelId, direction);
+        await RebalanceService.rebalance({ channelId, direction, sendMessage });
+        ws.close();
+    });
+})
 
 
 console.log('BOS-Mode Listening on 3001');
-
-const logger = console.log;
 
 
 

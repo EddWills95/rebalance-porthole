@@ -14,8 +14,8 @@ const Channel = ({ channel, onSelect, selected }) => {
             {/* <div className="balance" /> */}
             <Balance local_balance={channel.localBalance} remote_balance={channel.remoteBalance} />
             <div className="capacity">
-                <p className="value">{channel.localBalance}</p>
-                <p className="value">{channel.remoteBalance}</p>
+                <p className="value">Local: {channel.localBalance}</p>
+                <p className="value">Remote: {channel.remoteBalance}</p>
             </div>
         </div>
     )

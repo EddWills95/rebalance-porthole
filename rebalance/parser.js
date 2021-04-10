@@ -1,4 +1,4 @@
-const dataPoints = ['Pubkey', 'Channel Point', 'Local ratio', 'Capacity', 'Remote balance', 'Local balance', 'Amount for 50-50']
+const dataPoints = ['Channel ID', 'Pubkey', 'Channel Point', 'Local ratio', 'Capacity', 'Remote balance', 'Local balance', 'Amount for 50-50']
 
 const camelCase = require('../utils/camelCase');
 

@@ -27,24 +27,6 @@ class Lightning {
     }
 
     balance(local, remote) {
-        // return swaps.rebalance({
-        //     logger,
-        //     avoid: flatten([options.avoid].filter(n => !!n)),
-        //     fs: {getFile: readFile},
-        //     in_through: options.in || undefined,
-        //     in_outbound: options.inTargetOutbound || undefined,
-        //     is_avoiding_high_inbound: options.avoidHighInbound || undefined,
-        //     lnd: (await lnd.authenticatedLnd({logger, node: options.node})).lnd,
-        //     max_fee: options.maxFee,
-        //     max_fee_rate: options.maxFeeRate,
-        //     max_rebalance: options.amount,
-        //     node: options.node || undefined,
-        //     out_channels: flatten([options.outChannel].filter(n => !!n)),
-        //     out_inbound: options.outTargetInbound,
-        //     out_through: options.out || undefined,
-        //     timeout_minutes: options.minutes || undefined,
-        //   },
-
         try {
             return rebalance({
                 max_fee: 0,
