@@ -27,7 +27,7 @@ app.get('/channels', async (req, res) => {
         RebalanceService.getOutgoingCandidates()
     ]);
 
-    res.json(channels.map(channel => {
+    const organiseChannel = async (channel) => {
         const incoming = incomingCandidates.find((incoming) => {
             return incoming.pubkey === channel.partnerPublicKey;
         });
@@ -36,16 +36,27 @@ app.get('/channels', async (req, res) => {
             return incoming.pubkey === channel.partnerPublicKey;
         });
 
+        // This adds loads of time to the request.
+        const { alias } = await LightningService.getNode(channel.partnerPublicKey);
+
         if (incoming) {
-            return { candidate: 'incoming', ...channel, ...incoming }
+            return { alias, candidate: 'incoming', ...channel, ...incoming }
         }
 
         if (outgoing) {
-            return { candidate: 'outgoing', ...channel, ...outgoing }
+            return { alias, candidate: 'outgoing', ...channel, ...outgoing }
         }
 
-        return channel;
-    }));
+        return { alias, ...channel };
+    }
+
+    const getData = async () => {
+        return Promise.all(channels.map(channel => organiseChannel(channel)));
+    }
+
+    getData().then(data => {
+        res.json(data);
+    })
 })
 
 app.get('/incomingCandidates', async (req, res) => {

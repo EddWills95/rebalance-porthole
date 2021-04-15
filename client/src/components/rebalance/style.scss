@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
     
     .messages {
         display: flex;
@@ -12,7 +13,7 @@
         margin: 0 auto;
         border-radius: 6px;
 
-        max-height: 500px;
+        max-height: 450px;
         overflow-y: auto;
 
         background: linear-gradient(90deg, gray 0%, #2d2c2c 100%);
@@ -22,6 +23,7 @@
 
         p {
             margin: 10px;
+            text-align: center;
         }
     }
 

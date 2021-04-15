@@ -1,6 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
 .bos-mode {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  font-family: 'Open Sans', sans-serif;
+
+  .back-arrow {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    width: 35px;
+    height: 35px;
+
+    &:hover {
+      cursor: pointer;
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+    }
+  }
 }

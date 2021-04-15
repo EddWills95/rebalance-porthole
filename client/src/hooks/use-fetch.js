@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const url = 'http://localhost:3001';
 
@@ -7,31 +7,28 @@ const useFetch = (endpoint) => {
     const [data, setData] = useState(undefined);
     const [error, setError] = useState(undefined);
 
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${url}/${endpoint}`);
+            const data = await response.json();
+            setData(data);
+        } catch (error) {
+            setError(error);
+        }
+        setLoading(false);
+    }, [endpoint]);
+
     useEffect(() => {
         if (!endpoint) {
             setError('No endpoint');
             return;
         }
 
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch(`${url}/${endpoint}`);
-                const data = await response.json();
-                setData(data);
-            } catch (error) {
-                setError(error);
-            }
-            setLoading(false);
-        };
-
-
         fetchData();
+    }, [endpoint, fetchData]);
 
-
-    }, [endpoint]);
-
-    return { loading, data, error };
+    return { loading, data, error, refetch: fetchData };
 };
 
 export default useFetch;

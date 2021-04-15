@@ -5,16 +5,12 @@ import Rebalance from "./components/rebalance";
 import useFetch from './hooks/use-fetch';
 import { sortChannels } from './utils';
 
-const INCOMING = "Incoming";
-const OUTGOING = "Outgoing";
+import { ReactComponent as BackArrow } from "./components/channel/arrow_back_black_24dp.svg";
 
 function App() {
-  const [sort, setSort] = useState(INCOMING);
   const [selected, setSelected] = useState(undefined);
 
-  const { loading, data: channels, error } = useFetch(
-    sort === INCOMING ? "incomingCandidates" : "outgoingCandidates"
-  );
+  const { loading, data: channels, error, refetch } = useFetch('channels');
 
   const handleSelect = (channel) => {
     if (selected === channel) {
@@ -33,19 +29,19 @@ function App() {
 
   return (
     <div className="bos-mode">
-      <select value={sort} onChange={({ target: { value } }) => setSort(value)}>
-        <option value={INCOMING}>{INCOMING}</option>
-        <option value={OUTGOING}>{OUTGOING}</option>
-      </select>
+      <h1>🤖 BOS-Mode ⚡️</h1>
 
       {loading && <h1>Loading...</h1>}
 
       {!loading && !selected && sortChannels(channels).map(channel =>
-        <Channel key={channel.channelId} channel={channel} onSelect={handleSelect} />
+        <Channel key={channel.partnerPublicKey} channel={channel} onSelect={handleSelect} />
       )}
 
       {selected && (
-        <Rebalance channel={selected} onSelect={() => handleSelect(undefined)} />
+        <>
+          <BackArrow className="back-arrow" onClick={() => handleSelect(undefined)} />
+          <Rebalance channel={selected} onSelect={() => handleSelect(undefined)} onRebalance={refetch} />
+        </>
       )}
     </div>
   );

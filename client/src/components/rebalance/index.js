@@ -4,7 +4,7 @@ import useSocket from "../../hooks/use-socket";
 
 import "./style.scss";
 
-const Rebalance = ({ channel, onSelect }) => {
+const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
     const [rebalancing, setRebalancing] = useState(false);
     const [messages, setMessages] = useState([]);
 
@@ -22,9 +22,10 @@ const Rebalance = ({ channel, onSelect }) => {
 
         socket().onclose = () => {
             setRebalancing(false);
+            onRebalance();
         }
 
-    }, [messages, setMessages, socket]);
+    }, [messages, setMessages, socket, onRebalance]);
 
     const handleRebalance = () => {
         setRebalancing(true);

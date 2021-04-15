@@ -18,7 +18,7 @@ class Lightning {
     }
 
     getNode(public_key) {
-        return lnService.getNode({ lnd: this.lnd, public_key })
+        return lnService.getNode({ lnd: this.lnd, public_key });
     }
 
     getWalletInfo() {

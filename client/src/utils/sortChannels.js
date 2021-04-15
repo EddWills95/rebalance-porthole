@@ -1,15 +1,21 @@
 const sortChannels = (channels, reverse = false) => {
-    const sorted = channels.sort((a, b) => {
+    const sortByRatio = channels.sort((a, b) => {
         if (a.localRatio < b.localRatio) return -1;
         if (a.localRatio > b.localRatio) return 1;
         return 0;
     });
 
+    const sortByCandidateStatus = sortByRatio.sort((a, b) => {
+        if (!a.candidate && b.candidate) return 1;
+        if (a.candidate && !b.candidate) return -1;
+        return 0;
+    })
+
     if (reverse) {
-        return sorted.reverse();
+        return sortByCandidateStatus.reverse();
     }
 
-    return sorted;
+    return sortByCandidateStatus;
 }
 
 export default sortChannels;
