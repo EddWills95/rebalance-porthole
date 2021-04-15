@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 
 const url = 'http://localhost:3001';
 
-const useFetch = (endpoint, refetch = true) => {
+const useFetch = (endpoint) => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(undefined);
     const [error, setError] = useState(undefined);
-    const [fetchAgain, setFetchAgain] = useState(refetch);
 
     useEffect(() => {
         if (!endpoint) {
@@ -24,16 +23,15 @@ const useFetch = (endpoint, refetch = true) => {
                 setError(error);
             }
             setLoading(false);
-            setFetchAgain(false);
         };
 
 
         fetchData();
 
 
-    }, [endpoint, fetchAgain]);
+    }, [endpoint]);
 
-    return { loading, data, error, refetch: () => setFetchAgain(true) };
+    return { loading, data, error };
 };
 
 export default useFetch;

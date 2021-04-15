@@ -4,11 +4,11 @@ import useSocket from "../../hooks/use-socket";
 
 import "./style.scss";
 
-const Rebalance = ({ channel, onSelect, refetch }) => {
+const Rebalance = ({ channel, onSelect }) => {
     const [rebalancing, setRebalancing] = useState(false);
     const [messages, setMessages] = useState([]);
 
-    const { socket, reconnect } = useSocket('rebalance', refetch);
+    const { socket, reconnect } = useSocket('rebalance');
 
     useEffect(() => {
         if (!socket) return;
@@ -16,10 +16,15 @@ const Rebalance = ({ channel, onSelect, refetch }) => {
         socket().onmessage = (e) => {
             const message = JSON.parse(e.data);
             setMessages([...messages, message]);
-            console.log("e", message);
+            var elem = document.querySelector('.messages');
+            elem.scrollTop = elem.scrollHeight;
         }
 
-    }, [messages, setMessages, socket, refetch]);
+        socket().onclose = () => {
+            setRebalancing(false);
+        }
+
+    }, [messages, setMessages, socket]);
 
     const handleRebalance = () => {
         setRebalancing(true);
@@ -40,14 +45,16 @@ const Rebalance = ({ channel, onSelect, refetch }) => {
         <div className="rebalance">
             <Channel channel={channel} onSelect={onSelect} />
 
-            {rebalancing ?
-                <div className="messages">
-                    <p>Rebalancing</p>
-                    {messages.map((msg, index) =>
-                        <p key={index}>{msg}</p>
-                    )}
-                </div>
-                : <button onClick={handleRebalance}>Rebalance</button>}
+
+            <div className="messages">
+                {messages.map((msg, index) =>
+                    <p key={index}>{msg}</p>
+                )}
+            </div>
+
+            <button disabled={rebalancing} className="rebalance-button" onClick={handleRebalance}>
+                {rebalancing ? "..." : "Rebalance"}
+            </button>
         </div>
     )
 }

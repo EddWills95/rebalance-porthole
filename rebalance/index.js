@@ -60,7 +60,8 @@ class RebalanceService {
 
         return new Promise((resolve, reject) => {
             try {
-                const python = spawn('python', ['./rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, direction, channelId]);
+                // The -u is the key bit here
+                const python = spawn('python', ['-u', './rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, direction, channelId]);
 
                 python.stdout.on('data', function (data) {
                     console.log("stdout", data.toString());
@@ -68,10 +69,10 @@ class RebalanceService {
                 });
 
                 // This is what the python uses for debugging when balancing
-                // python.stderr.on('data', data => {
-                //     console.log("stderr", data.toString());
-                //     sendMessage(JSON.stringify(data.toString()));
-                // })
+                python.stderr.on('data', data => {
+                    console.log("stderr", data.toString());
+                    sendMessage(JSON.stringify(data.toString()));
+                });
 
                 python.on('close', code => {
                     resolve(code);

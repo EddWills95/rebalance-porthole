@@ -12,7 +12,7 @@ function App() {
   const [sort, setSort] = useState(INCOMING);
   const [selected, setSelected] = useState(undefined);
 
-  const { loading, data: channels, error, refetch } = useFetch(
+  const { loading, data: channels, error } = useFetch(
     sort === INCOMING ? "incomingCandidates" : "outgoingCandidates"
   );
 
@@ -45,7 +45,7 @@ function App() {
       )}
 
       {selected && (
-        <Rebalance channel={selected} onSelect={() => handleSelect(undefined)} refetch={refetch} />
+        <Rebalance channel={selected} onSelect={() => handleSelect(undefined)} />
       )}
     </div>
   );
