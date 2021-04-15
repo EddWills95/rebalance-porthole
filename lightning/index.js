@@ -1,5 +1,4 @@
 const lnService = require('ln-service');
-const rebalance = require('balanceofsatoshis/swaps/rebalance');
 const fs = require('fs')
 
 const cert = fs.readFileSync(__dirname + '/tls.cert');
@@ -24,21 +23,6 @@ class Lightning {
 
     getWalletInfo() {
         return lnService.getWalletInfo({ lnd: this.lnd });
-    }
-
-    balance(local, remote) {
-        try {
-            return rebalance({
-                max_fee: 0,
-                out_through: local,
-                in_through: remote,
-                // Temp
-                max_fee: 1
-                // We should test for avoids.
-            });
-        } catch (error) {
-            console.log(error);
-        }
     }
 }
 
