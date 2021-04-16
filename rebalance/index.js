@@ -3,9 +3,6 @@ const path = require('path');
 
 const Parser = require('./parser');
 
-const STATUS = {
-    DONE: "DONE"
-}
 
 class RebalanceService {
     constructor() {
@@ -54,14 +51,21 @@ class RebalanceService {
         })
     }
 
-    rebalance({ channelId, direction, sendMessage }) {
+    rebalance({ channelId, direction, amount = null, sendMessage }) {
         // We need a better way to clear this status
         this.status = '';
 
         return new Promise((resolve, reject) => {
             try {
+                const args = ['-u', './rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, direction, channelId];
+
+                if (amount) {
+                    args.push('-a');
+                    args.push(amount);
+                }
+
                 // The -u is the key bit here
-                const python = spawn('python', ['-u', './rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, direction, channelId]);
+                const python = spawn('python', args);
 
                 python.stdout.on('data', function (data) {
                     console.log("stdout", data.toString());

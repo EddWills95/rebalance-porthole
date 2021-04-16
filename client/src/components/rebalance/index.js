@@ -6,6 +6,7 @@ import "./style.scss";
 
 const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
     const [rebalancing, setRebalancing] = useState(false);
+    const [amount, setAmount] = useState(undefined);
     const [messages, setMessages] = useState([]);
 
     const { socket, reconnect } = useSocket('rebalance');
@@ -32,13 +33,25 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
         const channelId = channel.channelId
         const direction = channel.localBalance < channel.remoteBalance ? '-t' : '-f';
 
-        const message = JSON.stringify({ channelId, direction })
+        const message = { channelId, direction };
+
+        if (amount > 0) {
+            message['amount'] = amount;
+        }
 
         try {
-            socket().send(message);
+            socket().send(JSON.stringify(message));
         } catch (err) {
             reconnect();
-            socket().send(message);
+            socket().send(JSON.stringify(message));
+        }
+    }
+
+    const handleAmountChange = ({ target: { value } }) => {
+        if (value) {
+            setAmount(value);
+        } else {
+            setAmount(0);
         }
     }
 
@@ -46,6 +59,10 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
         <div className="rebalance">
             <Channel channel={channel} onSelect={onSelect} />
 
+            <div className="specific-amount">
+                <label for="amount">Rebalance Amount (Sats)</label>
+                <input name="amount" placeholder={channel.amountFor5050} value={amount} onChange={handleAmountChange} />
+            </div>
 
             <div className="messages">
                 {messages.map((msg, index) =>
