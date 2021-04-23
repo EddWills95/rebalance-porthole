@@ -4,11 +4,16 @@
     border-radius: 6px;
     overflow: hidden;
 
-    .inbound {
-        background-color: rgba(59, 40, 236, 0.1);
-    }
-
+    transition: width 10s;
+    
     .outbound {
+        transition: 1s ease;
+        width: 1%;
         background-color: rgba(241, 85, 85, 0.534);
+    }
+    
+    .inbound {
+        width: 100%;
+        background-color: rgba(59, 40, 236, 0.1);
     }
 }
