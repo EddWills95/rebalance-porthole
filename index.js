@@ -17,8 +17,7 @@ app.use(morgan('combined'));
 app.use(express.json());
 websocket(app);
 
-// We should have a mechanism to cancel\
-// A mechanism to set the amount used for rebalancing
+// Not properly updating the channel after finishing the balancing
 
 app.get('/channels', async (req, res) => {
     // Get all of the channels.

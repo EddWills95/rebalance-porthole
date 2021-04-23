@@ -60,7 +60,7 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
             <Channel channel={channel} onSelect={onSelect} />
 
             <div className="specific-amount">
-                <label for="amount">Rebalance Amount (Sats)</label>
+                <label htmlFor="amount">Rebalance Amount (Sats)</label>
                 <input name="amount" placeholder={channel.amountFor5050} value={amount} onChange={handleAmountChange} />
             </div>
 
