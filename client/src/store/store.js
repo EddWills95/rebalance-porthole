@@ -1,6 +1,5 @@
-// store.js
 import React, { createContext, useReducer } from 'react';
-import { FETCH_CHANNELS, SET_CHANNELS, SET_LOADING_FALSE, SET_LOADING_TRUE } from './actions';
+import { FETCH_CHANNELS, SET_CHANNEL, SET_LOADING_FALSE, SET_LOADING_TRUE } from './actions';
 
 const initialState = { channels: [], loading: false, error: undefined };
 const store = createContext(initialState);
@@ -15,8 +14,15 @@ const StateProvider = ({ children }) => {
                 return { ...state, loading: false };
             case FETCH_CHANNELS.type:
                 return { ...state, channels: action.payload }
-            case SET_CHANNELS.type:
-                return state;
+            case SET_CHANNEL.type:
+                const newChannelArray = [...state.channels];
+                // Find the existing channel to remove
+                const indexToRemove = newChannelArray.findIndex(channel => channel.partnerPublicKey === action.payload.partnerPublicKey);
+                const existing = newChannelArray[indexToRemove];
+                const mergedChannel = { ...existing, ...action.payload };
+                console.log(mergedChannel);
+                newChannelArray.splice(indexToRemove, 1)
+                return { ...state, channels: [...newChannelArray, mergedChannel] };
             default:
                 throw new Error();
         };

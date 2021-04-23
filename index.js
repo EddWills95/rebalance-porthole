@@ -19,6 +19,14 @@ websocket(app);
 
 // Not properly updating the channel after finishing the balancing
 
+app.get('/channel/:pubkey', async (req, res) => {
+    const { channels } = camelCase(await LightningService.getChannels(), { deep: true });
+
+    const channel = channels.filter(channel => channel.partnerPublicKey === req.params.pubkey)[0];
+
+    res.json(channel);
+})
+
 app.get('/channels', async (req, res) => {
     // Get all of the channels.
     const { channels } = camelCase(await LightningService.getChannels(), { deep: true });
@@ -82,6 +90,7 @@ app.ws('/rebalance', (ws, req) => {
         const { channelId, direction, amount } = JSON.parse(msg);
         console.log(channelId, direction);
         await RebalanceService.rebalance({ channelId, direction, amount, sendMessage });
+        console.log('done rebalancing');
         ws.close();
     });
 })

@@ -31,16 +31,26 @@ function App() {
   }, []);
 
   const handleSelect = (channel) => {
-    if (selected === channel) {
+    if (!channel) {
       return setSelected(undefined);
     }
 
-    setSelected(channel);
+    if (selected === channel.partnerPublicKey) {
+      return setSelected(undefined);
+    }
+
+    setSelected(channel.partnerPublicKey);
+  }
+
+  const getSelectedChannel = () => {
+    return channels.find(c => c.partnerPublicKey === selected);
   }
 
   if (error) {
     return <p>{JSON.stringify(error)}</p>
   }
+
+  console.log({ channels });
 
   return (
     <div className="bos-mode">
@@ -55,7 +65,7 @@ function App() {
       {selected && (
         <>
           <BackArrow className="back-arrow" onClick={() => handleSelect(undefined)} />
-          <Rebalance channel={selected} onSelect={() => handleSelect(undefined)} onRebalance={() => { }} />
+          <Rebalance channel={getSelectedChannel()} onSelect={() => handleSelect(undefined)} onRebalance={() => { }} />
         </>
       )}
     </div>
