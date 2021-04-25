@@ -3,6 +3,7 @@ import { Channel } from "..";
 import useSocket from "../../hooks/use-socket";
 import { SET_CHANNEL } from "../../store/actions";
 import { store } from "../../store/store";
+import sleep from "../../utils/sleep";
 
 import "./style.scss";
 
@@ -12,9 +13,7 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
     const [messages, setMessages] = useState([]);
     const { dispatch } = useContext(store);
 
-    const { socket, reconnect, closed } = useSocket('rebalance');
-
-    console.log(channel);
+    const { socket, closed } = useSocket('rebalance', () => setRebalancing(false));
 
     useEffect(() => {
         if (!socket) return;
@@ -26,20 +25,18 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
             elem.scrollTop = elem.scrollHeight;
 
             if (message.includes('Success!')) {
+                // We need to wait a bit for channels to catch up
+                await sleep(1000);
                 const response = await fetch(`http://localhost:3001/channel/${channel.pubkey}`);
                 const updatedChannel = await response.json();
-                console.log(updatedChannel);
                 dispatch({ ...SET_CHANNEL, payload: updatedChannel })
+                setRebalancing(false);
             }
-        }
-
-        socket().onclose = async () => {
-            setRebalancing(false);
         }
 
     }, [channel.pubkey, messages, setMessages, socket, onRebalance, dispatch]);
 
-    const handleRebalance = () => {
+    const handleRebalance = async () => {
         setRebalancing(true);
         const channelId = channel.channelId
         const direction = channel.localBalance < channel.remoteBalance ? '-t' : '-f';
@@ -50,13 +47,12 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
             message['amount'] = amount;
         }
 
-        if (closed) {
-            reconnect();
-            setMessages([]);
+        try {
             socket().send(JSON.stringify(message));
-        } else {
-            socket().send(JSON.stringify(message));
+        } catch (error) {
+            setMessages([error]);
         }
+
     }
 
     const handleAmountChange = ({ target: { value } }) => {

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 
-const useSocket = (endpoint, refetch = () => { }) => {
+const useSocket = (endpoint, closeCallback = () => { }) => {
     const ws = useRef(null);
     const [closed, setClosed] = useState(true);
 
@@ -15,8 +15,9 @@ const useSocket = (endpoint, refetch = () => { }) => {
             setClosed(false);
         }
         ws.current.onclose = () => {
+            console.log('closing from hook');
             setClosed(true);
-            refetch();
+            closeCallback && closeCallback();
         }
 
         return () => {

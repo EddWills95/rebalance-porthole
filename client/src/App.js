@@ -50,8 +50,6 @@ function App() {
     return <p>{JSON.stringify(error)}</p>
   }
 
-  console.log({ channels });
-
   return (
     <div className="bos-mode">
       <h1>🤖 BOS-Mode ⚡️</h1>

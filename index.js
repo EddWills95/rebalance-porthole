@@ -91,7 +91,6 @@ app.ws('/rebalance', (ws, req) => {
         console.log(channelId, direction);
         await RebalanceService.rebalance({ channelId, direction, amount, sendMessage });
         console.log('done rebalancing');
-        ws.close();
     });
 })
 
