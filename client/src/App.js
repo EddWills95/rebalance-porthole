@@ -1,12 +1,12 @@
 import { useState, useContext, useEffect } from "react";
-import './App.scss';
-import { Channel } from './components';
-import Rebalance from "./components/rebalance";
+import { Channel, Rebalance } from './components';
 import { sortChannels } from './utils';
 
 import { ReactComponent as BackArrow } from "./components/channel/arrow_back_black_24dp.svg";
 import { store } from "./store/store";
 import { SET_LOADING_TRUE, FETCH_CHANNELS, SET_LOADING_FALSE } from "./store/actions";
+
+import './App.scss';
 
 function App() {
   const [selected, setSelected] = useState(undefined);

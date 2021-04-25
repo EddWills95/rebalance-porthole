@@ -1,19 +1,26 @@
 import { useState, useEffect, useContext } from "react";
 import { Channel } from "..";
-import useSocket from "../../hooks/use-socket";
+import { useSocket } from "../../hooks";
+import { sleep } from "../../utils";
 import { SET_CHANNEL } from "../../store/actions";
 import { store } from "../../store/store";
-import sleep from "../../utils/sleep";
 
 import "./style.scss";
 
 const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
     const [rebalancing, setRebalancing] = useState(false);
     const [amount, setAmount] = useState(channel.amountFor5050);
+    const [success, setSuccess] = useState(false);
     const [messages, setMessages] = useState([]);
     const { dispatch } = useContext(store);
 
-    const { socket, closed } = useSocket('rebalance', () => setRebalancing(false));
+    const { socket } = useSocket('rebalance', () => setRebalancing(false));
+
+    useEffect(() => {
+        if (success) {
+            setTimeout(() => { setSuccess(false) }, 4000);
+        }
+    }, [success]);
 
     useEffect(() => {
         if (!socket) return;
@@ -25,6 +32,7 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
             elem.scrollTop = elem.scrollHeight;
 
             if (message.includes('Success!')) {
+                setSuccess(true);
                 // We need to wait a bit for channels to catch up
                 await sleep(1500);
                 const response = await fetch(`http://localhost:3001/channel/${channel.pubkey}`);
@@ -65,7 +73,7 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
 
     return (
         <div className="rebalance">
-            <Channel channel={channel} onSelect={onSelect} />
+            <Channel channel={channel} onSelect={onSelect} channelNotification={success && <p>Success!</p>} />
 
             <div className="specific-amount">
                 <label htmlFor="amount">Rebalance Amount (Sats)</label>

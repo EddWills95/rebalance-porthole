@@ -4,7 +4,7 @@ import { ReactComponent as ArrowForward } from "./arrow_forward_black_24dp.svg";
 
 import "./style.scss";
 
-const Channel = ({ channel, onSelect, selected }) => {
+const Channel = ({ channel, onSelect, selected, channelNotification = undefined }) => {
     if (selected) {
         return null;
     }
@@ -19,12 +19,12 @@ const Channel = ({ channel, onSelect, selected }) => {
                 {isCandidate && (channel.candidate === 'incoming' ? <ArrowForward /> : <ArrowBack />)}
                 {channel.alias}
             </p>
-            {/* <div className="balance" /> */}
             <Balance local_balance={channel.localBalance} remote_balance={channel.remoteBalance} />
             <div className="capacity">
                 <p className="value">Local: {channel.localBalance}</p>
                 <p className="value">Remote: {channel.remoteBalance}</p>
             </div>
+            <span className="notification">{channelNotification}</span>
         </div>
     )
 }
