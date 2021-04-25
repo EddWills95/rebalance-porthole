@@ -26,7 +26,7 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
 
             if (message.includes('Success!')) {
                 // We need to wait a bit for channels to catch up
-                await sleep(1000);
+                await sleep(1500);
                 const response = await fetch(`http://localhost:3001/channel/${channel.pubkey}`);
                 const updatedChannel = await response.json();
                 dispatch({ ...SET_CHANNEL, payload: updatedChannel })
