@@ -82,15 +82,11 @@ app.get('/outgoingCandidates', async (req, res) => {
 });
 
 app.ws('/rebalance', (ws, req) => {
-    console.log('connection established');
-
     const sendMessage = (message) => ws.send(message);
 
     ws.on('message', async (msg) => {
         const { channelId, direction, amount } = JSON.parse(msg);
-        console.log(channelId, direction);
         await RebalanceService.rebalance({ channelId, direction, amount, sendMessage });
-        console.log('done rebalancing');
     });
 })
 

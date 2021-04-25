@@ -20,7 +20,6 @@ const StateProvider = ({ children }) => {
                 const indexToRemove = newChannelArray.findIndex(channel => channel.partnerPublicKey === action.payload.partnerPublicKey);
                 const existing = newChannelArray[indexToRemove];
                 const mergedChannel = { ...existing, ...action.payload };
-                console.log(mergedChannel);
                 newChannelArray.splice(indexToRemove, 1)
                 return { ...state, channels: [...newChannelArray, mergedChannel] };
             default:

@@ -40,6 +40,11 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
                 dispatch({ ...SET_CHANNEL, payload: updatedChannel })
                 setRebalancing(false);
             }
+
+            if (message.includes('Could not find any suitable route')) {
+                setSuccess(false);
+                setRebalancing(false);
+            }
         }
 
     }, [channel.pubkey, messages, setMessages, socket, onRebalance, dispatch]);

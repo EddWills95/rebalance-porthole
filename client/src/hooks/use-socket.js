@@ -15,7 +15,6 @@ const useSocket = (endpoint, closeCallback = () => { }) => {
             setClosed(false);
         }
         ws.current.onclose = () => {
-            console.log('closing from hook');
             setClosed(true);
             closeCallback && closeCallback();
         }
