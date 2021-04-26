@@ -22,14 +22,18 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
         }
     }, [success]);
 
+    const scrollDown = () => {
+        var elem = document.querySelector('.messages');
+        elem.scrollTop = elem.scrollHeight;
+    }
+
     useEffect(() => {
         if (!socket) return;
 
         socket().onmessage = async (e) => {
             const message = JSON.parse(e.data);
             setMessages([...messages, message]);
-            var elem = document.querySelector('.messages');
-            elem.scrollTop = elem.scrollHeight;
+            scrollDown();
 
             if (message.includes('Success!')) {
                 setSuccess(true);
@@ -76,6 +80,13 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
         }
     }
 
+    const handleCancel = () => {
+        socket().send(JSON.stringify('CANCEL'));
+        setMessages([...messages, '😢 Cancelled 😢'])
+        setRebalancing(false);
+        scrollDown();
+    }
+
     return (
         <div className="rebalance">
             <Channel channel={channel} onSelect={onSelect} channelNotification={success && <p>Success!</p>} />
@@ -91,9 +102,13 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
                 )}
             </div>
 
-            <button disabled={rebalancing} className="rebalance-button" onClick={handleRebalance}>
-                {rebalancing ? "..." : "Rebalance"}
+            {rebalancing ?
+                <button className="rebalance-button cancel" onClick={handleCancel}>Cancel</button> :
+                <button disabled={rebalancing} className="rebalance-button" onClick={handleRebalance}>
+                    Rebalance
             </button>
+            }
+
         </div>
     )
 }

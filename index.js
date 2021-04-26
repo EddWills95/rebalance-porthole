@@ -85,6 +85,11 @@ app.ws('/rebalance', (ws, req) => {
     const sendMessage = (message) => ws.send(message);
 
     ws.on('message', async (msg) => {
+        if (JSON.parse(msg) === 'CANCEL') {
+            RebalanceService.kill();
+            return;
+        }
+
         const { channelId, direction, amount } = JSON.parse(msg);
         await RebalanceService.rebalance({ channelId, direction, amount, sendMessage });
     });

@@ -9,6 +9,7 @@ class RebalanceService {
         this.lndDir = path.resolve('./lightning');
         this.grpc = 'umbrel.local:10009';
         this.status = '';
+        this.process = undefined;
     }
 
     getIncomingCandidates() {
@@ -66,6 +67,7 @@ class RebalanceService {
 
                 // The -u is the key bit here
                 const python = spawn('python', args);
+                this.process = python;
 
                 python.stdout.on('data', function (data) {
                     console.log("stdout", data.toString());
@@ -79,6 +81,7 @@ class RebalanceService {
                 });
 
                 python.on('close', code => {
+                    this.python = undefined;
                     resolve(code);
                 });
             } catch (error) {
@@ -86,6 +89,24 @@ class RebalanceService {
                 reject(error);
             }
         })
+    }
+
+    kill() {
+        if (!this.process) {
+            console.log('no python');
+            return
+        }
+
+        try {
+            this.process.stdout.pause();
+            this.process.stderr.pause();
+            this.process.kill();
+        } catch (error) {
+            console.log(error);
+            return error;
+        }
+
+        return;
     }
 }
 
