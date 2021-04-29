@@ -4,7 +4,7 @@ import { useSocket } from "../../hooks";
 import { sleep } from "../../utils";
 import { SET_CHANNEL } from "../../store/actions";
 import { store } from "../../store/store";
-import { Button, InputNumber, message } from 'antd';
+import { Button, InputNumber, message as AntMessage } from 'antd';
 
 import "./style.scss";
 
@@ -40,17 +40,17 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
                 setSuccess(true);
                 // We need to wait a bit for channels to catch up
                 await sleep(1500);
-                const response = await fetch(`http://localhost:3001/channel/${channel.pubkey}`);
+                const response = await fetch(`http://${process.env.REACT_APP_API_URL}/channel/${channel.pubkey}`);
                 const updatedChannel = await response.json();
                 dispatch({ ...SET_CHANNEL, payload: updatedChannel })
-                message.success('Success!');
+                AntMessage.success('Success!');
                 setRebalancing(false);
             }
 
             if (message.includes('Could not find any suitable route')) {
+                AntMessage.error('No luck rebalancing');
                 setSuccess(false);
                 setRebalancing(false);
-                message.error('No luck rebalancing');
             }
         }
 

@@ -4,3 +4,8 @@
 *.macaroon
 
 todo.md
+
+**.env
+**.log
+
+bos-mode.log

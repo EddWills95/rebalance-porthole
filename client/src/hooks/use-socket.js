@@ -1,12 +1,14 @@
 import { useRef, useEffect, useState } from "react";
 
+const websocket = `ws://${process.env.REACT_APP_API_URL}`;
+
 const useSocket = (endpoint, closeCallback = () => { }) => {
     const ws = useRef(null);
     const [closed, setClosed] = useState(true);
 
     const getSocket = () => ws.current;
     const connect = () => {
-        ws.current = new WebSocket(`ws://localhost:3001/${endpoint}`)
+        ws.current = new WebSocket(`${websocket}/${endpoint}`)
     }
 
     useEffect(() => {

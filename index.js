@@ -1,23 +1,22 @@
+require('dotenv').config()
 const camelCase = require('camelcase-keys');
 const express = require('express')
 const app = express()
 const cors = require('cors');
-const morgan = require('morgan');
+const logger = require('morgan');
 const websocket = require('express-ws');
-
-// const balances = require('./node_modules/balanceofsatoshis/balances');
-// const rebalance = require('./node_modules/balanceofsatoshis/swaps/rebalance');
 
 const LightningService = require('./lightning');
 const RebalanceService = require('./rebalance');
-// const { rebalance } = require('./rebalance');
 
 app.use(cors());
-app.use(morgan('combined'));
+
+console.log(process.env.LOG_FILE);
+
+app.use(logger('common'));
+app.use(logger('dev'));
 app.use(express.json());
 websocket(app);
-
-// Not properly updating the channel after finishing the balancing
 
 app.get('/channel/:pubkey', async (req, res) => {
     const { channels } = camelCase(await LightningService.getChannels(), { deep: true });
@@ -94,7 +93,6 @@ app.ws('/rebalance', (ws, req) => {
         await RebalanceService.rebalance({ channelId, direction, amount, sendMessage });
     });
 })
-
 
 console.log('BOS-Mode Listening on 3001');
 app.listen(3001)

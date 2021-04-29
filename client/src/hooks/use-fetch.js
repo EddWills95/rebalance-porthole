@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const url = 'http://localhost:3001';
+const url = `http://${process.env.REACT_APP_API_URL}`;
 
 const useFetch = (endpoint) => {
     const [loading, setLoading] = useState(true);
