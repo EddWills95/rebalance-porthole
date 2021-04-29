@@ -4,6 +4,7 @@ import { useSocket } from "../../hooks";
 import { sleep } from "../../utils";
 import { SET_CHANNEL } from "../../store/actions";
 import { store } from "../../store/store";
+import { Button, InputNumber, message } from 'antd';
 
 import "./style.scss";
 
@@ -42,12 +43,14 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
                 const response = await fetch(`http://localhost:3001/channel/${channel.pubkey}`);
                 const updatedChannel = await response.json();
                 dispatch({ ...SET_CHANNEL, payload: updatedChannel })
+                message.success('Success!');
                 setRebalancing(false);
             }
 
             if (message.includes('Could not find any suitable route')) {
                 setSuccess(false);
                 setRebalancing(false);
+                message.error('No luck rebalancing');
             }
         }
 
@@ -72,7 +75,7 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
 
     }
 
-    const handleAmountChange = ({ target: { value } }) => {
+    const handleAmountChange = (value) => {
         if (value) {
             setAmount(value);
         } else {
@@ -89,11 +92,11 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
 
     return (
         <div className="rebalance">
-            <Channel channel={channel} onSelect={onSelect} channelNotification={success && <p>Success!</p>} />
+            <Channel channel={channel} onSelect={onSelect} />
 
             <div className="specific-amount">
                 <label htmlFor="amount">Rebalance Amount (Sats)</label>
-                <input name="amount" placeholder={channel.amountFor5050} value={amount} onChange={handleAmountChange} />
+                <InputNumber name="amount" className="sat-input" placeholder={channel.amountFor5050} value={amount} onChange={handleAmountChange} />
             </div>
 
             <div className="messages">
@@ -103,10 +106,10 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
             </div>
 
             {rebalancing ?
-                <button className="rebalance-button cancel" onClick={handleCancel}>Cancel</button> :
-                <button disabled={rebalancing} className="rebalance-button" onClick={handleRebalance}>
+                <Button type="warning" className="cancel" onClick={handleCancel}>Cancel</Button> :
+                <Button type="primary" className="rebalance-button" onClick={handleRebalance}>
                     Rebalance
-            </button>
+                </Button>
             }
 
         </div>
