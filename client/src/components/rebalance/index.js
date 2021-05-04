@@ -1,10 +1,10 @@
-import { useState, useEffect, useContext } from "react";
+import { Button, InputNumber, message as AntMessage } from 'antd';
+import { useContext, useEffect, useState } from "react";
 import { Channel } from "..";
 import { useSocket } from "../../hooks";
-import { sleep } from "../../utils";
-import { SET_CHANNEL } from "../../store/actions";
+import { FETCH_CHANNELS, SET_CHANNEL } from "../../store/actions";
 import { store } from "../../store/store";
-import { Button, InputNumber, message as AntMessage } from 'antd';
+import { sleep } from "../../utils";
 
 import "./style.scss";
 
@@ -45,6 +45,12 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
                 dispatch({ ...SET_CHANNEL, payload: updatedChannel })
                 AntMessage.success('Success!');
                 setRebalancing(false);
+
+                // Refetch channels in the background
+                const channelsResponse = await fetch(`http://${process.env.REACT_APP_API_URL}/channels`);
+                const channels = await channelsResponse.json();
+
+                dispatch({ ...FETCH_CHANNELS, payload: channels });
             }
 
             if (message.includes('Could not find any suitable route')) {

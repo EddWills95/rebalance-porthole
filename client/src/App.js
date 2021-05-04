@@ -1,10 +1,9 @@
-import { useState, useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Channel, Rebalance } from './components';
-import { sortChannels } from './utils';
-
 import { ReactComponent as BackArrow } from "./components/channel/arrow_back_black_24dp.svg";
+import { FETCH_CHANNELS, SET_LOADING_FALSE, SET_LOADING_TRUE } from "./store/actions";
 import { store } from "./store/store";
-import { SET_LOADING_TRUE, FETCH_CHANNELS, SET_LOADING_FALSE } from "./store/actions";
+import { sortChannels } from './utils';
 
 import './App.scss';
 
@@ -16,7 +15,7 @@ function App() {
     const fetchChannels = async () => {
       dispatch(SET_LOADING_TRUE);
 
-      const response = await fetch('http://localhost:3001/channels');
+      const response = await fetch(`http://${process.env.REACT_APP_API_URL}/channels`);
       const channels = await response.json();
 
       dispatch({ ...FETCH_CHANNELS, payload: channels });
