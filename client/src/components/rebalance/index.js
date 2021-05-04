@@ -96,7 +96,15 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
 
             <div className="specific-amount">
                 <label htmlFor="amount">Rebalance Amount (Sats)</label>
-                <InputNumber name="amount" className="sat-input" placeholder={channel.amountFor5050} value={amount} onChange={handleAmountChange} />
+                <InputNumber
+                    name="amount"
+                    className="sat-input"
+                    placeholder={channel.amountFor5050}
+                    value={amount}
+                    onChange={handleAmountChange}
+                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                />
             </div>
 
             <div className="messages">
