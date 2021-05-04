@@ -1,4 +1,4 @@
-# BOS-Mode
+# 🤖 BOS-Mode ⚡️
 
 Balance Channels without being a CLI wizard
 
