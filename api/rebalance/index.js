@@ -1,13 +1,11 @@
 const { spawn } = require('child_process');
-const path = require('path');
 
 const Parser = require('./parser');
 
-
 class RebalanceService {
     constructor() {
-        this.lndDir = path.resolve('./lightning');
-        this.grpc = 'umbrel.local:10009';
+        this.lndDir = process.env.LND_DATA_DIR;
+        this.grpc = `${process.env.LND_IP}:${process.env.LND_GRPC_PORT}`;
         this.status = '';
         this.process = undefined;
     }

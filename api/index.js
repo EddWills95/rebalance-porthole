@@ -25,40 +25,36 @@ app.get('/channel/:pubkey', async (req, res) => {
 })
 
 app.get('/channels', async (req, res) => {
-    try {
-        // Get all of the channels.
-        const { channels } = camelCase(await LightningService.getChannels(), { deep: true });
+    // Get all of the channels.
+    const { channels } = camelCase(await LightningService.getChannels(), { deep: true });
 
-        // Highlight incoming / outgoing channels & add the ID so that we can rebalance
-        [incomingCandidates, outgoingCandidates] = await Promise.all([
-            RebalanceService.getIncomingCandidates(),
-            RebalanceService.getOutgoingCandidates()
-        ]);
+    // Highlight incoming / outgoing channels & add the ID so that we can rebalance
+    [incomingCandidates, outgoingCandidates] = await Promise.all([
+        RebalanceService.getIncomingCandidates(),
+        RebalanceService.getOutgoingCandidates()
+    ]);
 
-        const organiseChannel = async (channel) => {
-            const incoming = incomingCandidates.find((incoming) => {
-                return incoming.pubkey === channel.partnerPublicKey;
-            });
+    const organiseChannel = async (channel) => {
+        const incoming = incomingCandidates.find((incoming) => {
+            return incoming.pubkey === channel.partnerPublicKey;
+        });
 
-            const outgoing = outgoingCandidates.find((incoming) => {
-                return incoming.pubkey === channel.partnerPublicKey;
-            });
+        const outgoing = outgoingCandidates.find((incoming) => {
+            return incoming.pubkey === channel.partnerPublicKey;
+        });
 
-            // This adds loads of time to the request.
-            const { alias } = await LightningService.getNode(channel.partnerPublicKey);
+        // This adds loads of time to the request.
+        const { alias } = await LightningService.getNode(channel.partnerPublicKey);
 
-            if (incoming) {
-                return { alias, candidate: 'incoming', ...channel, ...incoming }
-            }
-
-            if (outgoing) {
-                return { alias, candidate: 'outgoing', ...channel, ...outgoing }
-            }
-
-            return { alias, ...channel };
+        if (incoming) {
+            return { alias, candidate: 'incoming', ...channel, ...incoming }
         }
-    } catch (error) {
-        console.log(error);
+
+        if (outgoing) {
+            return { alias, candidate: 'outgoing', ...channel, ...outgoing }
+        }
+
+        return { alias, ...channel };
     }
 
     const getData = async () => {
@@ -87,6 +83,7 @@ app.ws('/rebalance', (ws, req) => {
 
     ws.on('message', async (msg) => {
         if (JSON.parse(msg) === 'CANCEL') {
+            console.log('Cancelling');
             RebalanceService.kill();
             return;
         }

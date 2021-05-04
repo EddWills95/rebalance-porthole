@@ -1,16 +1,15 @@
 const lnService = require('ln-service');
-const fs = require('fs')
+const fs = require('fs');
 
-const cert = fs.readFileSync(__dirname + '/tls.cert');
-const macaroon = fs.readFileSync(__dirname + '/data/chain/bitcoin/mainnet/admin.macaroon');
+const cert = fs.readFileSync(process.env.LND_DATA_DIR + '/tls.cert');
+const macaroon = fs.readFileSync(process.env.LND_DATA_DIR + '/data/chain/bitcoin/mainnet/admin.macaroon');
 
 class Lightning {
     constructor() {
         this.lnd = lnService.authenticatedLndGrpc({
             cert,
             macaroon,
-            // socket: 'umbrel.local:10009',
-            socket: `${process.env.LND_IP}:${process.env.LND_GRPC}`
+            socket: `${process.env.LND_IP}:${process.env.LND_GRPC_PORT}`
         }).lnd;
     }
 

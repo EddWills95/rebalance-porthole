@@ -3,7 +3,6 @@ const dataPoints = ['Channel ID', 'Pubkey', 'Channel Point', 'Local ratio', 'Cap
 const camelCase = require('../utils/camelCase');
 
 class Parser {
-
     parseChannels(string) {
         const splitStrings = string.split(/\([0-9]*\)*/);
 
