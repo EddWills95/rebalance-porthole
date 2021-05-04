@@ -1,15 +1,18 @@
 version: "3.9" # optional since v1.27.0
 services:
-    # ui:
-    #     build: client/
-    #     ports:
-    #         - "3000:3000"
-    api:
-        build: ./api
+    ui:
+        build: ./client
         ports:
-            - "3001:3001"
-        volumes:
-            - ${LND_DATA_DIR}:/app/lightning:ro
-        environment:
-            - LND_IP:$LND_IP
-            - LND_GRPC:$LND_GRPC_PORT
+            - "3000:80"
+        # depends_on:
+        #     - api
+
+    # api:
+    #     build: ./api
+    #     ports:
+    #         - "3001:3001"
+    #     volumes:
+    #         - ${LND_DATA_DIR}:/app/lightning:ro
+    #     environment:
+    #         LND_IP: $LND_IP
+    #         LND_GRPC: $LND_GRPC_PORT

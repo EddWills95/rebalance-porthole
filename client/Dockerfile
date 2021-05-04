@@ -1,5 +1,5 @@
 # stage1 - build react app first 
-FROM node:12-alpine as build-stage
+FROM node:12-alpine as build
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ COPY . /app
 RUN yarn build
 
 
-FROM nginx:1.15
-COPY --from=build-stage /app/build/ /usr/share/nginx/html
-# Copy the default nginx.conf provided by tiangolo/node-frontend
-COPY --from=build-stage /app/nginx.conf /etc/nginx/conf.d/default.conf
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
