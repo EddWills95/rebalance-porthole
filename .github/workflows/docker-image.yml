@@ -22,8 +22,7 @@ jobs:
         id: docker_build_api
         uses: docker/build-push-action@v2
         with:
-          context: api
-          file: api/Dockerfile
+          file: ./api/Dockerfile
           push: true
           tags: eddwills95/bos-mode-api:latest
 
@@ -31,8 +30,7 @@ jobs:
         id: docker_build_client
         uses: docker/build-push-action@v2
         with:
-          context: client
-          file: client/Dockerfile
+          file: ./client/Dockerfile
           push: true
           tags: eddwills95/bos-mode-client:latest
       - name: Image digest
