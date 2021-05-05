@@ -26,7 +26,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: EddWills95/BOS-Mode:latest
+          tags: eddwills95/bos-mode:latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
