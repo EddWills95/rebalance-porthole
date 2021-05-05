@@ -23,6 +23,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           path: api
+          file: ./api/Dockerfile
           push: true
           tags: eddwills95/bos-mode-api:latest
 
@@ -31,6 +32,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           path: client
+          file: ./client/Dockerfile
           push: true
           tags: eddwills95/bos-mode-client:latest
       - name: Image digest
