@@ -17,12 +17,6 @@ LND_GRPC_PORT
 LND_DATA_DIR
 ```
 
-To run both together:
-
-```
-./start.sh
-```
-
 You can run the individual parts inside each directory:
 
 ```
