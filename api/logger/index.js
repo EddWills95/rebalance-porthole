@@ -1,4 +1,5 @@
-var winston = require('winston')
+const winston = require('winston');
+const constants = require('./constants');
 // define the custom settings for each transport (file, console)
 
 var options = {
@@ -35,4 +36,4 @@ logger.stream = {
     },
 };
 
-module.exports = logger;
+module.exports = { default: logger, constants };

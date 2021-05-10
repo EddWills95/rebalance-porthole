@@ -1,4 +1,5 @@
 const { spawn } = require('child_process');
+const { default: Logger, constants } = require('../logger');
 
 const Parser = require('./parser');
 
@@ -51,11 +52,14 @@ class RebalanceService {
     }
 
     rebalance({ channelId, direction, amount = null, sendMessage }) {
+        Logger.info(constants.REBALANCING);
         // We need a better way to clear this status
         this.status = '';
 
         return new Promise((resolve, reject) => {
             try {
+                // The -u is the key bit here
+                // It means that the stdout/err will be un-buffered
                 const args = ['-u', './rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, direction, channelId];
 
                 if (amount) {
@@ -63,7 +67,6 @@ class RebalanceService {
                     args.push(amount);
                 }
 
-                // The -u is the key bit here
                 const python = spawn('python', args);
                 this.process = python;
 
@@ -73,7 +76,6 @@ class RebalanceService {
 
                 // This is what the python uses for debugging when balancing
                 python.stderr.on('data', data => {
-                    console.log("stderr", data.toString());
                     sendMessage(JSON.stringify(data.toString()));
                 });
 
@@ -83,6 +85,7 @@ class RebalanceService {
                 });
             } catch (error) {
                 console.log(error);
+                Logger.error(`Rebalancing: ${error}`);
                 reject(error);
             }
         })

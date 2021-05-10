@@ -5,13 +5,13 @@ const app = express()
 const cors = require('cors');
 const morgan = require('morgan');
 const websocket = require('express-ws');
-const winston = require('./config/winston');
 
+const Logger = require('./logger');
 const LightningService = require('./lightning');
 const RebalanceService = require('./rebalance');
 
 app.use(cors());
-app.use(morgan('combined', { stream: winston.stream }));
+app.use(morgan('combined', { stream: Logger.stream }));
 app.use(express.json());
 websocket(app);
 
