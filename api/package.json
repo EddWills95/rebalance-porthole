@@ -14,7 +14,8 @@
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "ln-service": "^51.5.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
