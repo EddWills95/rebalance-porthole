@@ -39,6 +39,6 @@ yarn start
 
 -   [x] Switch Success / error to notification component
 -   [x] Switch to using ENVs
--   [ ] Add a log file (Success + Costs / Errors)
+-   [x] Add a log file (Success + Costs / Errors)
 -   [ ] Auto Balance (job queue)
 -   [ ] Dockerise (☂️😉)
