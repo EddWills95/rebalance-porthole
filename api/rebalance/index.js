@@ -17,7 +17,6 @@ class RebalanceService {
                 const python = spawn('python', ['./rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-i']);
 
                 python.stdout.on('data', function (data) {
-                    console.log("stdout", data.toString());
                     dataToSend = data.toString();
                 });
 
@@ -69,7 +68,6 @@ class RebalanceService {
                 this.process = python;
 
                 python.stdout.on('data', function (data) {
-                    // console.log("stdout", data.toString());
                     sendMessage(JSON.stringify(data.toString()));
                 });
 
