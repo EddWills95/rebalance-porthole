@@ -3,16 +3,15 @@ const camelCase = require('camelcase-keys');
 const express = require('express')
 const app = express()
 const cors = require('cors');
-const logger = require('morgan');
+const morgan = require('morgan');
 const websocket = require('express-ws');
+const winston = require('./config/winston');
 
 const LightningService = require('./lightning');
 const RebalanceService = require('./rebalance');
 
 app.use(cors());
-
-app.use(logger('common'));
-app.use(logger('dev'));
+app.use(morgan('combined', { stream: winston.stream }));
 app.use(express.json());
 websocket(app);
 
