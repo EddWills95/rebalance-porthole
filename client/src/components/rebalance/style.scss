@@ -4,20 +4,43 @@
     align-items: center;
     width: 100%;
 
-    .specific-amount {
-        margin-bottom: 1em;
+    .adjustments {
         display: flex;
-        flex-direction: column;
-        
-        .sat-input {
-            width: 100%;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 60%;
+
+        .label-spaced {
+            display: flex;
+            justify-content: space-between;
+
+            .label-clickable {
+                color: blue;
+                text-decoration: underline;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .value-adjuster {
+            margin-bottom: 1em;
+            display: flex;
+            flex-direction: column;
+            min-width: 150px;
+            
+            .input {
+                width: 100%;
+            }
         }
     }
+
 
     .messages {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
 
         width: 80%;
         margin: 0 auto;
@@ -34,7 +57,6 @@
 
         p {
             margin: 10px;
-            text-align: center;
         }
     }
 

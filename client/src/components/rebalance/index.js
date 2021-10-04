@@ -1,4 +1,4 @@
-import { Button, InputNumber, message as AntMessage } from 'antd';
+import { Button, InputNumber, message as AntMessage, Slider, Checkbox } from 'antd';
 import { useContext, useEffect, useState } from "react";
 import { Channel } from "..";
 import { useSocket } from "../../hooks";
@@ -11,6 +11,8 @@ import "./style.scss";
 const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
     const [rebalancing, setRebalancing] = useState(false);
     const [amount, setAmount] = useState(channel.amountFor5050);
+    const [feeFactor, setFeeFactor] = useState(1);
+    const [reckless, setReckless] = useState(false);
     const [success, setSuccess] = useState(false);
     const [messages, setMessages] = useState([]);
     const { dispatch } = useContext(store);
@@ -73,6 +75,10 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
             message['amount'] = amount;
         }
 
+        if (reckless) {
+            message['reckless'] = true;
+        }
+
         try {
             socket().send(JSON.stringify(message));
         } catch (error) {
@@ -89,6 +95,14 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
         }
     }
 
+    const handleFeeChange = (value) => {
+        if (value) {
+            setFeeFactor(value);
+        } else {
+            setFeeFactor(1);
+        }
+    }
+
     const handleCancel = () => {
         socket().send(JSON.stringify('CANCEL'));
         setMessages([...messages, '😢 Cancelled 😢'])
@@ -96,22 +110,62 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
         scrollDown();
     }
 
+    const getLocalAvailable = () => {
+        return Math.max(0, channel.local_balance - channel.local_chan_reserve_sat)
+    }
+
+    const getRemoteAvailable = () => {
+        return Math.max(0, channel.remote_balance - channel.remote_chan_reserve_sat)
+    }
+
+    const getRebalanceAmount = () => {
+        const local_available = this.getLocalAvailable();
+        const remote_available = this.getRemoteAvailable();
+        const too_small = local_available + remote_available < self.min_local + self.min_remote
+        
+        if (too_small) {
+            return int(self.get_scaled_min_local(channel) - local_available)
+        }
+        if (local_available < self.min_local) {
+            return self.min_local - local_available
+        }
+        if (remote_available < self.min_remote) {
+            return remote_available - self.min_remote
+        }
+        return 0
+    }
+
     return (
         <div className="rebalance">
             <Channel channel={channel} onSelect={onSelect} />
 
-            <div className="specific-amount">
-                <label htmlFor="amount">Rebalance Amount (Sats)</label>
-                <InputNumber
-                    name="amount"
-                    className="sat-input"
-                    placeholder={channel.amountFor5050}
-                    value={amount}
-                    onChange={handleAmountChange}
-                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                />
+            <div className="adjustments">
+                <div className="value-adjuster">
+                    <label htmlFor="amount">Rebalance Amount (Sats)</label>
+                    <InputNumber
+                        name="amount"
+                        className="input"
+                        placeholder={rebalanceAmount}
+                        value={amount}
+                        onChange={handleAmountChange}
+                        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                    />
+                </div>
+
+                <div className="value-adjuster">
+                    <label htmlFor="fee" className="label-spaced">
+                        Fee Factor - {feeFactor}
+                        {feeFactor !== 1 && <span className="label-clickable" onClick={() => setFeeFactor(1)}>reset</span>}
+                    </label>
+                    <Slider name="fee" className="input" step={0.1} min={0.5} max={1.5} tooltipVisible={false} value={feeFactor} onChange={handleFeeChange} />
+                </div>
+
+                <div className="value-adjuster">
+                    <Checkbox checked={reckless} onChange={() => setReckless(!reckless)}>Reckless</Checkbox>
+                </div>
             </div>
+
 
             <div className="messages">
                 {messages.map((msg, index) =>

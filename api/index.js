@@ -87,8 +87,8 @@ app.ws('/rebalance', (ws, req) => {
             return;
         }
 
-        const { channelId, direction, amount } = JSON.parse(msg);
-        await RebalanceService.rebalance({ channelId, direction, amount, sendMessage });
+        const { channelId, direction, amount, feeFactor } = JSON.parse(msg);
+        await RebalanceService.rebalance({ channelId, direction, amount, sendMessage, feeFactor });
     });
 })
 

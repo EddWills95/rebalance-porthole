@@ -51,7 +51,7 @@ class RebalanceService {
         })
     }
 
-    rebalance({ channelId, direction, amount = null, sendMessage }) {
+    rebalance({ channelId, direction, amount = null, feeFactor = 1, sendMessage }) {
         Logger.info(constants.REBALANCING);
         // We need a better way to clear this status
         this.status = '';
@@ -65,6 +65,11 @@ class RebalanceService {
                 if (amount) {
                     args.push('-a');
                     args.push(amount);
+                }
+
+                if (feeFactor) {
+                    args.push('--fee-factor')
+                    args.push(feeFactor);
                 }
 
                 const python = spawn('python', args);
