@@ -34,15 +34,15 @@ function App() {
       return setSelected(undefined);
     }
 
-    if (selected === channel.partnerPublicKey) {
+    if (selected === channel.pubkey) {
       return setSelected(undefined);
     }
 
-    setSelected(channel.partnerPublicKey);
+    setSelected(channel.pubkey);
   }
 
   const getSelectedChannel = () => {
-    return channels.find(c => c.partnerPublicKey === selected);
+    return channels.find(c => c.pubkey === selected);
   }
 
   if (error) {
@@ -55,8 +55,8 @@ function App() {
 
       {loading && <h1>Loading...</h1>}
 
-      {!loading && !selected && sortChannels(channels).map(channel =>
-        <Channel key={channel.partnerPublicKey} channel={channel} onSelect={handleSelect} />
+      {!loading && !selected && channels.map(channel =>
+        <Channel key={channel.pubkey} channel={channel} onSelect={handleSelect} />
       )}
 
       {selected && (

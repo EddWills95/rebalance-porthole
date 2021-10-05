@@ -9,15 +9,15 @@ import { sleep } from "../../utils";
 import "./style.scss";
 
 const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
+
     const [rebalancing, setRebalancing] = useState(false);
     const [amount, setAmount] = useState(channel.amountFor5050);
     const [feeFactor, setFeeFactor] = useState(1);
     const [reckless, setReckless] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [messages, setMessages] = useState([]);
     const { dispatch } = useContext(store);
 
-    const { socket } = useSocket('rebalance', () => setRebalancing(false));
+    const { messages, sendMessage } = useSocket('rebalance', () => setRebalancing(false));
 
     useEffect(() => {
         if (success) {
@@ -31,45 +31,20 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
     }
 
     useEffect(() => {
-        if (!socket) return;
-
-        socket().onmessage = async (e) => {
-            const message = JSON.parse(e.data);
-            setMessages([...messages, message]);
-            scrollDown();
-
-            if (message.includes('Success!')) {
-                setSuccess(true);
-                // We need to wait a bit for channels to catch up
-                await sleep(1500);
-                const response = await fetch(`http://${process.env.REACT_APP_API_URL}/channel/${channel.pubkey}`);
-                const updatedChannel = await response.json();
-                dispatch({ ...SET_CHANNEL, payload: updatedChannel })
-                AntMessage.success('Success!');
-                setRebalancing(false);
-
-                // Refetch channels in the background
-                const channelsResponse = await fetch(`http://${process.env.REACT_APP_API_URL}/channels`);
-                const channels = await channelsResponse.json();
-
-                dispatch({ ...FETCH_CHANNELS, payload: channels });
-            }
-
-            if (message.includes('Could not find any suitable route')) {
-                AntMessage.error('No luck rebalancing');
-                setSuccess(false);
-                setRebalancing(false);
-            }
+        scrollDown();
+        if (messages.length && messages[messages.length - 1].includes('Successful route')) {
+            setRebalancing(false);
+            setSuccess(true);
         }
-
-    }, [channel.pubkey, messages, setMessages, socket, onRebalance, dispatch]);
+    }, [messages])
 
     const handleRebalance = async () => {
         setRebalancing(true);
         const channelId = channel.channelId
-        const direction = channel.localBalance < channel.remoteBalance ? '-t' : '-f';
+        // const direction = channel.localBalance < channel.remoteBalance ? '-t' : '-f';
 
-        const message = { channelId, direction };
+        // const message = { channelId, direction };
+        const message = { to: `${channelId}` }
 
         if (amount > 0) {
             message['amount'] = amount;
@@ -80,9 +55,10 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
         }
 
         try {
-            socket().send(JSON.stringify(message));
+            sendMessage(JSON.stringify(message));
         } catch (error) {
-            setMessages([error]);
+            console.log('setting error message here');
+            // setMessages([error]);
         }
 
     }
@@ -104,35 +80,11 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
     }
 
     const handleCancel = () => {
-        socket().send(JSON.stringify('CANCEL'));
-        setMessages([...messages, '😢 Cancelled 😢'])
+        // socket().send(JSON.stringify('CANCEL'));
+        console.log('setting cancelled message');
+        // setMessages([...messages, '😢 Cancelled 😢'])
         setRebalancing(false);
         scrollDown();
-    }
-
-    const getLocalAvailable = () => {
-        return Math.max(0, channel.local_balance - channel.local_chan_reserve_sat)
-    }
-
-    const getRemoteAvailable = () => {
-        return Math.max(0, channel.remote_balance - channel.remote_chan_reserve_sat)
-    }
-
-    const getRebalanceAmount = () => {
-        const local_available = this.getLocalAvailable();
-        const remote_available = this.getRemoteAvailable();
-        const too_small = local_available + remote_available < self.min_local + self.min_remote
-        
-        if (too_small) {
-            return int(self.get_scaled_min_local(channel) - local_available)
-        }
-        if (local_available < self.min_local) {
-            return self.min_local - local_available
-        }
-        if (remote_available < self.min_remote) {
-            return remote_available - self.min_remote
-        }
-        return 0
     }
 
     return (
@@ -145,7 +97,7 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
                     <InputNumber
                         name="amount"
                         className="input"
-                        placeholder={rebalanceAmount}
+                        placeholder={channel.rebalanceAmount}
                         value={amount}
                         onChange={handleAmountChange}
                         formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}

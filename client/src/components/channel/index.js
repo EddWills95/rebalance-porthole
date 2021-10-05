@@ -9,7 +9,7 @@ const Channel = ({ channel, onSelect, selected }) => {
         return null;
     }
 
-    const isCandidate = channel.candidate;
+    const isCandidate = true;
     // Add something if the channel is closing / opening
     // maybe a flash?
 
@@ -19,10 +19,10 @@ const Channel = ({ channel, onSelect, selected }) => {
                 {isCandidate && (channel.candidate === 'incoming' ? <ArrowForward /> : <ArrowBack />)}
                 {channel.alias}
             </p>
-            <Balance local_balance={channel.localBalance} remote_balance={channel.remoteBalance} />
+            <Balance local_balance={channel.localAvailable} remote_balance={channel.remoteAvailable} />
             <div className="capacity">
-                <p className="value">Local: {channel.localBalance}</p>
-                <p className="value">Remote: {channel.remoteBalance}</p>
+                <p className="value">Local: {channel.localAvailable}</p>
+                <p className="value">Remote: {channel.remoteAvailable}</p>
             </div>
         </div>
     )
