@@ -7,9 +7,9 @@ COPY ./yarn.lock /api/
 
 RUN yarn install --production
 
-COPY . /api/
+RUN git clone https://github.com/C-Otto/rebalance-lnd.git
 
-RUN ls
+COPY . /api/
 
 RUN pip install -r /api/rebalance-py/requirements.txt 
 
