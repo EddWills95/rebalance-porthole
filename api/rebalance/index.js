@@ -14,12 +14,15 @@ class RebalanceService {
     getIncomingCandidates() {
         return new Promise((resolve, reject) => {
             var dataToSend;
+
             try {
-                const python = spawn('python', ['./rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-i']);
+                const python = spawn('python', ['./rebalance-lnd/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-i']);
 
                 python.stdout.on('data', function (data) {
                     dataToSend = data.toString();
                 });
+
+                python.stderr.on('data', (data) => console.log(data.toString()));
 
                 python.on('close', code => {
                     resolve(Parser.parseChannels(dataToSend));
@@ -35,7 +38,7 @@ class RebalanceService {
         return new Promise((resolve, reject) => {
             var dataToSend;
             try {
-                const python = spawn('python', ['./rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-o']);
+                const python = spawn('python', ['./rebalance-lnd/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-o']);
 
                 python.stdout.on('data', function (data) {
                     dataToSend = data.toString();
@@ -60,7 +63,7 @@ class RebalanceService {
             try {
                 // The -u is the key bit here
                 // It means that the stdout/err will be un-buffered
-                const args = ['-u', './rebalance-py/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, direction, channelId];
+                const args = ['-u', './rebalance-lnd/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, direction, channelId];
 
                 if (amount) {
                     args.push('-a');
