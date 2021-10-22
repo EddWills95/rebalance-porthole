@@ -1,23 +1,22 @@
-import { Button, InputNumber, message as AntMessage, Slider, Checkbox } from 'antd';
+import { Button, Checkbox, InputNumber, message as AntMessage, Slider } from 'antd';
 import { useContext, useEffect, useState } from "react";
 import { Channel } from "..";
 import { useSocket } from "../../hooks";
-import { FETCH_CHANNELS, SET_CHANNEL } from "../../store/actions";
-import { store } from "../../store/store";
-import { sleep } from "../../utils";
+import { SET_REBALANCING } from "../../store/actions";
+import { INCOMING, store } from "../../store/store";
+import Message from '../message';
 
 import "./style.scss";
 
 const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
-    const [rebalancing, setRebalancing] = useState(false);
     const [amount, setAmount] = useState(channel.amountFor5050);
     const [feeFactor, setFeeFactor] = useState(1);
     const [reckless, setReckless] = useState(false);
     const [success, setSuccess] = useState(false);
     const [messages, setMessages] = useState([]);
-    const { dispatch } = useContext(store);
+    const { dispatch, state: { candidateDirection, rebalancing } } = useContext(store);
 
-    const { socket } = useSocket('rebalance', () => setRebalancing(false));
+    const { socket } = useSocket('rebalance', () => dispatch({ type: SET_REBALANCING, payload: false }));
 
     useEffect(() => {
         if (success) {
@@ -35,39 +34,30 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
 
         socket().onmessage = async (e) => {
             const message = JSON.parse(e.data);
-            setMessages([...messages, message]);
+            const parsedMessage = message.split(/\n/).filter(Boolean);
+            setMessages([...messages, ...parsedMessage]);
             scrollDown();
 
             if (message.includes('Success!')) {
                 setSuccess(true);
-                // We need to wait a bit for channels to catch up
-                await sleep(1500);
-                const response = await fetch(`http://${process.env.REACT_APP_API_URL}/channel/${channel.pubkey}`);
-                const updatedChannel = await response.json();
-                dispatch({ ...SET_CHANNEL, payload: updatedChannel })
+
                 AntMessage.success('Success!');
-                setRebalancing(false);
-
-                // Refetch channels in the background
-                const channelsResponse = await fetch(`http://${process.env.REACT_APP_API_URL}/channels`);
-                const channels = await channelsResponse.json();
-
-                dispatch({ ...FETCH_CHANNELS, payload: channels });
+                dispatch({ type: SET_REBALANCING, payload: false })
             }
 
             if (message.includes('Could not find any suitable route')) {
                 AntMessage.error('No luck rebalancing');
                 setSuccess(false);
-                setRebalancing(false);
+                dispatch({ type: SET_REBALANCING, payload: false })
             }
         }
 
     }, [channel.pubkey, messages, setMessages, socket, onRebalance, dispatch]);
 
     const handleRebalance = async () => {
-        setRebalancing(true);
+        dispatch({ type: SET_REBALANCING, payload: true })
         const channelId = channel.channelId
-        const direction = channel.localBalance < channel.remoteBalance ? '-t' : '-f';
+        const direction = candidateDirection === INCOMING ? '-t' : '-f';
 
         const message = { channelId, direction };
 
@@ -106,33 +96,8 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
     const handleCancel = () => {
         socket().send(JSON.stringify('CANCEL'));
         setMessages([...messages, '😢 Cancelled 😢'])
-        setRebalancing(false);
+        dispatch({ type: SET_REBALANCING, payload: false })
         scrollDown();
-    }
-
-    const getLocalAvailable = () => {
-        return Math.max(0, channel.local_balance - channel.local_chan_reserve_sat)
-    }
-
-    const getRemoteAvailable = () => {
-        return Math.max(0, channel.remote_balance - channel.remote_chan_reserve_sat)
-    }
-
-    const getRebalanceAmount = () => {
-        const local_available = this.getLocalAvailable();
-        const remote_available = this.getRemoteAvailable();
-        const too_small = local_available + remote_available < self.min_local + self.min_remote
-        
-        if (too_small) {
-            return int(self.get_scaled_min_local(channel) - local_available)
-        }
-        if (local_available < self.min_local) {
-            return self.min_local - local_available
-        }
-        if (remote_available < self.min_remote) {
-            return remote_available - self.min_remote
-        }
-        return 0
     }
 
     return (
@@ -145,7 +110,7 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
                     <InputNumber
                         name="amount"
                         className="input"
-                        placeholder={rebalanceAmount}
+                        placeholder={channel.rebalanceAmount}
                         value={amount}
                         onChange={handleAmountChange}
                         formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -169,7 +134,7 @@ const Rebalance = ({ channel, onSelect, onRebalance = () => { } }) => {
 
             <div className="messages">
                 {messages.map((msg, index) =>
-                    <p key={index}>{msg}</p>
+                    <Message key={index} message={msg} />
                 )}
             </div>
 

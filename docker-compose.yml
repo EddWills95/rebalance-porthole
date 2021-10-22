@@ -3,7 +3,7 @@ services:
     ui:
         build: ./client
         ports:
-            - "3000:80"
+            - "80:80"
         depends_on:
             - api
 
@@ -14,5 +14,6 @@ services:
         volumes:
             - ${LND_DATA_DIR}:/app/lightning:ro
         environment:
+            LND_DATA_DIR: /app/lightning
             LND_IP: $LND_IP
             LND_GRPC: $LND_GRPC_PORT

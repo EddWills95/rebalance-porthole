@@ -2,7 +2,6 @@ import React from "react";
 
 const Message = ({ message, ...props }) => {
     const messageClasses = (message = '') => {
-        console.log(message);
         let classes = ['message'];
         if (message.includes('Trying route')) {
             classes.push('trying-route');

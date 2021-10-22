@@ -92,5 +92,5 @@ app.ws('/rebalance', (ws, req) => {
     });
 })
 
-console.log('BOS-Mode Listening on 3001');
 app.listen(3001)
+console.log('BOS-Mode Listening on 3001');

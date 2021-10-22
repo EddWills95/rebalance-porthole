@@ -16,7 +16,7 @@ class RebalanceService {
             var dataToSend;
 
             try {
-                const python = spawn('python', ['./rebalance-lnd/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-i']);
+                const python = spawn('python3', ['./rebalance-lnd/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-i']);
 
                 python.stdout.on('data', function (data) {
                     dataToSend = data.toString();
@@ -38,7 +38,7 @@ class RebalanceService {
         return new Promise((resolve, reject) => {
             var dataToSend;
             try {
-                const python = spawn('python', ['./rebalance-lnd/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-o']);
+                const python = spawn('python3', ['./rebalance-lnd/rebalance.py', '--grpc', this.grpc, '--lnddir', this.lndDir, '-l', '-o']);
 
                 python.stdout.on('data', function (data) {
                     dataToSend = data.toString();
@@ -75,7 +75,7 @@ class RebalanceService {
                     args.push(feeFactor);
                 }
 
-                const python = spawn('python', args);
+                const python = spawn('python3', args);
                 this.process = python;
 
                 python.stdout.on('data', function (data) {
@@ -84,6 +84,7 @@ class RebalanceService {
 
                 // This is what the python uses for debugging when balancing
                 python.stderr.on('data', data => {
+                    console.log(data.toString());
                     sendMessage(JSON.stringify(data.toString()));
                 });
 

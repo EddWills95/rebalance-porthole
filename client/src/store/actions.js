@@ -1,4 +1,6 @@
-export const SET_LOADING_TRUE = { type: 'SET_LOADING_TRUE' };
-export const SET_LOADING_FALSE = { type: 'SET_LOADING_FALSE' };
-export const FETCH_CHANNELS = { type: 'FETCH_CHANNELS' };
-export const SET_CHANNEL = { type: 'SET_CHANNEL' };
+export const SET_LOADING_TRUE = 'SET_LOADING_TRUE';
+export const SET_LOADING_FALSE = 'SET_LOADING_FALSE';
+export const FETCH_CHANNELS = 'FETCH_CHANNELS';
+export const SET_CHANNEL = 'SET_CHANNEL';
+export const SET_DIRECTION = 'SET_DIRECTION';
+export const SET_REBALANCING = 'SET_REBALANCING';
